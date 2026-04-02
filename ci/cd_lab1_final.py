@@ -40,3 +40,25 @@ class Board:
                     if 0 <= ny < self.size and 0 <= nx < self.size:
                         if self.grid[ny][nx] != 0:
                             return False
+
+    def place_random_ships(self):
+        ship_lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+        for length in ship_lengths:
+            placed = False
+            while not placed:
+                x = random.randint(0, self.size - 1)
+                y = random.randint(0, self.size - 1)
+                orientation = random.choice(["H", "V"])
+                if self.place_ship(x, y, length, orientation):
+                    placed = True
+
+    def place_ship(self, x, y, length, orientation):
+        if self._can_place(x, y, length, orientation):
+            for i in range(length):
+                if orientation == "H":
+                    self.grid[y][x + i] = 1
+                else:
+                    self.grid[y + i][x] = 1
+            self.ships_alive += length
+            return True
+        return False
