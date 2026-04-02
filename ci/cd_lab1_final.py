@@ -268,3 +268,8 @@ class BattleshipGame:
             x, y = random.randint(0, 9), random.randint(0, 9)
         self.player_board.receive_shot(x, y)
         self.turn = "player"
+
+if __name__ == "__main__":
+    config = Config()
+    game = BattleshipGame(config)
+    game.run()
