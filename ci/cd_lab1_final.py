@@ -90,3 +90,13 @@ class BattleshipGame:
                                        self.config.cell_size, self.config.cell_size)
                     pygame.draw.rect(self.screen, color, rect)
                     pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
+
+    def run(self):
+        while self.running:
+            self.screen.fill(self.config.bg_color)
+
+            # Відмальовка полів та підписів
+            player_x, player_y = self.config.cell_size, self.config.cell_size * 2
+            ai_x, ai_y = self.config.cell_size * 12, self.config.cell_size * 2
+
+            self.draw_board(self.player_board, player_x, player_y)
