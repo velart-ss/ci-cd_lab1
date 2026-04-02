@@ -46,3 +46,47 @@ class BattleshipGame:
         self.running = True
         self.turn = "player"
         self.winner_text = ""
+
+    def draw_board(self, board, offset_x, offset_y, hide_ships=False):
+        for y in range(board.size):
+            for x in range(board.size):
+                rect = pygame.Rect(offset_x + x * self.config.cell_size,
+                                   offset_y + y * self.config.cell_size,
+                                   self.config.cell_size, self.config.cell_size)
+
+                color = (200, 200, 200)  # Вода
+                val = board.grid[y][x]
+
+                if val == 1 and not hide_ships:
+                    color = (100, 100, 100)  # Корабель (Сірий)
+                elif val == 2:
+                    color = (255, 255, 255)  # Промах (Білий)
+                elif val == 3:
+                    color = (220, 20, 60)  # Поранення (Червоний)
+                elif val == 4:
+                    color = (255, 140, 0)  # Знищений (Помаранчевий)
+
+                pygame.draw.rect(self.screen, color, rect)
+                pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
+
+    def draw_placement_preview(self, start_x, start_y):
+        mx, my = pygame.mouse.get_pos()
+        if start_x <= mx < start_x + 10 * self.config.cell_size and \
+                start_y <= my < start_y + 10 * self.config.cell_size:
+
+            grid_x = (mx - start_x) // self.config.cell_size
+            grid_y = (my - start_y) // self.config.cell_size
+            length = self.ships_to_place[0]
+
+            is_valid = self.player_board._can_place(grid_x, grid_y, length, self.current_orientation)
+            color = (150, 255, 150) if is_valid else (255, 150, 150)  # Зелений або рожевий
+
+            for i in range(length):
+                px = grid_x + i if self.current_orientation == "H" else grid_x
+                py = grid_y if self.current_orientation == "H" else grid_y + i
+                if 0 <= px < 10 and 0 <= py < 10:
+                    rect = pygame.Rect(start_x + px * self.config.cell_size,
+                                       start_y + py * self.config.cell_size,
+                                       self.config.cell_size, self.config.cell_size)
+                    pygame.draw.rect(self.screen, color, rect)
+                    pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
