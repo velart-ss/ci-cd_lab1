@@ -186,3 +186,10 @@ class BattleshipGame:
 
         pygame.quit()
         sys.exit()
+
+    def ai_move(self):
+        x, y = random.randint(0, 9), random.randint(0, 9)
+        while self.player_board.grid[y][x] in [2, 3, 4]:
+            x, y = random.randint(0, 9), random.randint(0, 9)
+        self.player_board.receive_shot(x, y)
+        self.turn = "player"
