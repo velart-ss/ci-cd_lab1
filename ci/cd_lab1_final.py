@@ -62,3 +62,13 @@ class Board:
             self.ships_alive += length
             return True
         return False
+
+    def receive_shot(self, x, y):
+        if self.grid[y][x] == 1:
+            self.grid[y][x] = 3  # Влучання
+            self.ships_alive -= 1
+            self.mark_if_sunk(x, y)  # Перевіряємо, чи корабель знищено
+            return True
+        elif self.grid[y][x] == 0:
+            self.grid[y][x] = 2  # Промах
+        return False
