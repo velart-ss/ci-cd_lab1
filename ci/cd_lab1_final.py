@@ -171,10 +171,37 @@ class BattleshipGame:
                     pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
 
     def ai_move(self):
-        x, y = random.randint(0, 9), random.randint(0, 9)
-        while self.player_board.grid[y][x] in [2, 3, 4]:
+        # Якщо граємо на Hard і в комп'ютера є збережені цілі для "добивання"
+        if self.config.difficulty == "hard" and hasattr(self, 'ai_targets') and self.ai_targets:
+            x, y = self.ai_targets.pop()
+            # Шукаємо валідну ціль
+            while self.player_board.grid[y][x] in [2, 3, 4] and self.ai_targets:
+                x, y = self.ai_targets.pop()
+            # Якщо цілі закінчилися, а нормальну клітинку не знайшли, стріляємо рандомом
+            if self.player_board.grid[y][x] in [2, 3, 4]:
+                x, y = random.randint(0, 9), random.randint(0, 9)
+                while self.player_board.grid[y][x] in [2, 3, 4]:
+                    x, y = random.randint(0, 9), random.randint(0, 9)
+        else:
+            # Режим Easy (або Hard, але поки немає поранених кораблів) - випадковий постріл
             x, y = random.randint(0, 9), random.randint(0, 9)
-        self.player_board.receive_shot(x, y)
+            while self.player_board.grid[y][x] in [2, 3, 4]:
+                x, y = random.randint(0, 9), random.randint(0, 9)
+
+        # Робимо постріл і перевіряємо, чи є влучання
+        hit = self.player_board.receive_shot(x, y)
+
+        # Логіка для HARD: якщо влучили, запам'ятовуємо сусідні клітинки!
+        if hit and self.config.difficulty == "hard":
+            if not hasattr(self, 'ai_targets'):
+                self.ai_targets = []
+            # Додаємо координати зверху, знизу, зліва і справа
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nx, ny = x + dx, y + dy
+                # Перевіряємо, чи не виходить за межі поля і чи туди ще не стріляли
+                if 0 <= nx < 10 and 0 <= ny < 10 and self.player_board.grid[ny][nx] in [0, 1]:
+                    self.ai_targets.append((nx, ny))
+
         self.turn = "player"
 
     def run(self):
