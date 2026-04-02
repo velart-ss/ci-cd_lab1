@@ -77,3 +77,19 @@ class Board:
         # Алгоритм пошуку всіх клітинок одного корабля
         cells = []
         visited = set()
+
+        def dfs(cx, cy):
+            if (cx, cy) in visited: return
+            if not (0 <= cx < self.size and 0 <= cy < self.size): return
+            if self.grid[cy][cx] not in [1, 3]: return  # Шукаємо тільки цілі та підбиті палуби
+            visited.add((cx, cy))
+            cells.append((cx, cy))
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                dfs(cx + dx, cy + dy)
+
+        dfs(x, y)
+
+        # Якщо серед знайдених клітинок немає цілих (1), значить корабель знищено
+        if all(self.grid[cy][cx] == 3 for cx, cy in cells):
+            for cx, cy in cells:
+                self.grid[cy][cx] = 4  # 4 - статус "Знищено"
