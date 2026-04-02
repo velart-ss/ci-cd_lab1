@@ -72,3 +72,8 @@ class Board:
         elif self.grid[y][x] == 0:
             self.grid[y][x] = 2  # Промах
         return False
+
+    def mark_if_sunk(self, x, y):
+        # Алгоритм пошуку всіх клітинок одного корабля
+        cells = []
+        visited = set()
